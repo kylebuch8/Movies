@@ -10,6 +10,9 @@ var {
     ActivityIndicatorIOS,
 } = React;
 
+var MovieCell = require('./MovieCell');
+var MovieDetail = require('./MovieDetail');
+
 var REQUEST_URL = 'https://s3.amazonaws.com/nowplaying-v3/nowplaying.json';
 
 var Movies = React.createClass({
@@ -49,7 +52,7 @@ var Movies = React.createClass({
         return (
             <ListView
                 dataSource={this.state.dataSource}
-                renderRow={this.renderMovie}
+                renderRow={this.renderRow}
             />
         );
     },
@@ -68,22 +71,20 @@ var Movies = React.createClass({
         };
     },
 
-    renderMovie: function (movie) {
+    renderRow: function (movie) {
         return (
-            <View style={[styles.cellContainer, {backgroundColor: movie.colors.dominantColor}]}>
-                <Image
-                    source={{uri: movie.images.poster}}
-                    style={styles.cellImage}
-                />
-                <View style={styles.textContainer}>
-                    <Text style={[styles.title, {color: (movie.textColor === 'dark') ? '#333' : 'white'}]}>{movie.title}</Text>
-                    <Text style={[styles.rating, {color: (movie.textColor === 'dark') ? '#333' : 'white'}]}>{movie.ratings.critics_score}</Text>
-                    <Text style={[styles.condensed, {color: (movie.textColor === 'dark') ? '#333' : 'white'}]}>
-                        {movie.mpaa_rating}, {movie.duration}
-                    </Text>
-                </View>
-            </View>
+            <MovieCell
+                onSelect={() => this.selectMovie(movie)}
+                movie={movie}
+            />
         );
+    },
+
+    selectMovie: function (movie: Object) {
+        this.props.navigator.push({
+            component: MovieDetail,
+            passProps: {movie}
+        });
     },
 });
 
